@@ -1,25 +1,24 @@
 import json
 from bark import text_to_semantic
-import os.path
+import os
 import random
 import numpy
 
 from bark.generation import load_model
-
-output = 'output'
-
 from bark_hubert_quantizer.customtokenizer import auto_train
-
-from args import args
 from prepare import prepare2
 
-path = "/train/Literature"
+output = 'output'
+path = os.getcwd() + "/Literature"
+folder_path = os.getcwd() + "/Literature/ready"
+current_script_path = os.path.abspath(__file__)
+project_root = os.path.dirname(os.path.dirname(current_script_path))
+model = project_root + "/models/hubert/hubert.pt"
 
-model = "/Users/wangjian/Desktop/clone-voice/models/hubert/hubert.pt"
 
 # 读取JSON文件内容
 def save_json():
-    with open("/Volumes/mac/datatest/primewords_md_2018_set1/set1_transcript.json", "r") as file:
+    with open(path + "/set1_transcript.json", "r") as file:
         data = json.load(file)
 
     # 筛选出满足条件的元素（以字典形式存储）
@@ -38,7 +37,6 @@ def red_json():
     print('Loading semantics model')
     load_model(use_gpu=True, use_small=False, force_reload=False, model_type='text')
 
-
     # 读取 JSON 文件内容
     with open("sorted_filtered_data.json", "r") as file:
         sorted_data = json.load(file)
@@ -55,12 +53,9 @@ def red_json():
 
 
 # 处理数据
-
 def process_data():
     prepare2(path, model)
 
-
-folder_path = "//train/Literature/ready"
 
 
 #处理数据
@@ -86,7 +81,7 @@ def data_process():
                     number += 1
                 else:
                     print(filename1)
-
+# 重命名
 def rename():
     # 获取文件夹中的所有文件名
     file_names = os.listdir(folder_path)
@@ -108,6 +103,6 @@ def start_train():
 # save_json()
 # red_json()
 # process_data()
-# data_process()
+data_process()
 # rename()
-start_train()
+#start_train()
