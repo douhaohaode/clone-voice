@@ -1,0 +1,4 @@
+models/*
+venv/
+train/Literature/
+.idea/

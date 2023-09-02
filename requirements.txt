@@ -1,0 +1,11 @@
+audiolm-pytorch==1.1.4
+fairseq
+huggingface-hub
+sentencepiece
+transformers
+encodec
+pytorch_seed
+mutagen
+soundfile; platform_system == "Windows"
+sox; platform_system != "Windows"
+gradio
