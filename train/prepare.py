@@ -53,10 +53,10 @@ def extract_files(zip_files: dict[str, str], out: str, start_offset: int = 0) ->
     return new_offset
 
 
-def prepare2(path, model):
+def prepare2(path, model_path):
     prepared = os.path.join(path, 'prepared')
     ready = os.path.join(path, 'ready')
-    hubert_model = CustomHubert(checkpoint_path=model, device=device)
+    hubert_model = CustomHubert(checkpoint_path=model_path, device=device)
     if not os.path.isdir(ready):
         os.mkdir(ready)
 

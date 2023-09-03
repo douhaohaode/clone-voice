@@ -5,8 +5,8 @@ from prepare import prepare, prepare2
 #from test_hubert import test_hubert
 from bark_hubert_quantizer.customtokenizer import auto_train
 
-# path = args.path
-# mode = args.mode
+path = args.path
+mode = args.mode
 model = args.hubert_model
 #
 # if mode == 'prepare':
@@ -27,7 +27,7 @@ model = args.hubert_model
 
 
 
-def process(mode : str ='' , path : str =''):
+def process():
 
     if mode == 'prepare':
         prepare(path)

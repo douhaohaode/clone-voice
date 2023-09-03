@@ -1,6 +1,8 @@
 import sys
 
 
+from train.args import args
+
 autolaunch = False
 if len(sys.argv) > 1:
     autolaunch = "-autolaunch" in sys.argv
@@ -23,4 +25,8 @@ initial_clone_name = "./bark/prompts/custom_prompts/custom_langeuage_en_1"
 language_type_list = ["pl", "en", "zh", "ja"]
 
 
+train_dataset_path = args.train_dataset
 
+train_process_path = args.process
+
+train_path = args.train

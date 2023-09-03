@@ -1,6 +1,7 @@
 import gradio as gr
 import time
 import webui_config
+from bark_hubert_quantizer.customtokenizer import auto_train
 from clone_voice import clone_voice
 from datetime import datetime
 import numpy as np
@@ -18,6 +19,7 @@ from bark.api import generate_with_settings
 from xml.sax import saxutils
 import torch
 import pytorch_seed
+from  train_language import  init_prepared, start_train
 
 
 app_title = webui_config.app_title
@@ -29,6 +31,13 @@ server_port  = webui_config.server_port
 server_share  = webui_config.server_share
 tokenizer_language_list = webui_config.language_type_list
 output_folder_path = webui_config.output_folder_path
+
+train_dataset_path = webui_config.train_dataset_path
+train_dataset_path_wav = webui_config.train_dataset_path
+
+train_process_path = webui_config.train_process_path
+train_path = webui_config.train_path
+
 
 input_text_desired_length = 110
 input_text_max_length = 170
@@ -314,6 +323,39 @@ while run_server:
             with gr.Row():
                 dummy = gr.Text(label="Progress")
 
+        with gr.Tab("训练"):
+            with gr.Row():
+                with gr.Column():
+                    train_dataset_json = gr.Textbox(label="json训练数据集", lines=1, placeholder=train_dataset_path,
+                                              value=train_dataset_path)
+                    train_dataset_wav = gr.Textbox(label="wav训练数据集", lines=1, placeholder=train_dataset_path_wav,
+                                               value=train_dataset_path_wav)
+            with gr.Row():
+                with gr.Row():
+                    train_dataset_button = gr.Button("数据处理")
+                with gr.Row():
+                    train_dataset_button_stop = gr.Button("停止生成")
+
+            with gr.Row():
+                train_dataset_dummy = gr.Text(label="Progress")
+
+            with gr.Row():
+                with gr.Column():
+                     train_Text = gr.Textbox(label="训练数据路径", lines=1, placeholder=train_path,
+                                                value=train_path)
+                with gr.Column():
+                    epochs = gr.Number(label="纪元", precision=0, value=1)
+
+            with gr.Row():
+                with gr.Row():
+                    train_button = gr.Button("开始训练")
+                with gr.Row():
+                    stop_train_button = gr.Button("停止训练")
+
+            with gr.Row():
+                 train_dummy = gr.Text(label="Progress")
+
+
         gen_click = tts_create_button.click(generate_text_to_speech,
                                             inputs=[input_text, speaker, select_model, text_temp, waveform_temp, eos_prob, quick_gen_checkbox, complete_settings, seedcomponent, batchcount],
                                             outputs=output_audio)
@@ -322,6 +364,15 @@ while run_server:
 
         # TODO clone_test-> clone_voice
         clone_voice_button.click(clone_voice, inputs=[input_audio_filename, tokenizerlang, output_voice], outputs=dummy)
+
+        train_dataset_stop = train_dataset_button.click(init_prepared, inputs=[train_dataset_json, train_dataset_wav], outputs=train_dataset_dummy)
+
+        train_dataset_button_stop.click(fn=None, inputs=None, outputs=None, cancels=[train_dataset_stop])
+
+        train_click = train_button.click(auto_train, inputs=[train_Text, epochs], outputs=train_dummy)
+
+        stop_train_button.click(fn=None, inputs=None, outputs=None, cancels=[train_click])
+
 
         restart_server = False
         try:

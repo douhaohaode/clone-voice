@@ -12,6 +12,7 @@ import numpy
 import torch
 from torch import nn, optim
 from torch.serialization import MAP_LOCATION
+import gradio
 
 device = (
     "cuda"
@@ -156,7 +157,11 @@ class Data:
         return json.dumps(data)
 
 
-def auto_train(data_path, save_path='model.pth', load_model: str | None = None, save_epochs=1):
+def auto_train(data_path, save_epochs=1, progress=gradio.Progress(track_tqdm=True)):
+
+    save_path = 'model.pth'
+    load_model=os.path.join(data_path, 'model.pth')
+
     data_x, data_y = {}, {}
 
     if load_model and os.path.isfile(load_model):
@@ -183,8 +188,11 @@ def auto_train(data_path, save_path='model.pth', load_model: str | None = None, 
             data_y[number] = numpy.load(full_path)
         elif input_file.endswith(feat_string):
             data_x[number] = numpy.load(full_path)
-    
+
     model_training.prepare_training()
+
+    ##progress(0, desc="开始训练")
+
     epoch = 1
 
     while 1:
@@ -204,8 +212,7 @@ def auto_train(data_path, save_path='model.pth', load_model: str | None = None, 
         model_training.save(save_p_2)
         print(f'Epoch {epoch} completed')
         epoch += 1
-        if epoch == 6 or 10 or 17:
-            model_training.save(save_p)
-            model_training.save(save_p_2)
-        if epoch == 17:
+        if epoch == save_epochs + 1:
             break
+    return "训练完成"
+
